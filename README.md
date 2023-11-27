@@ -8,7 +8,6 @@ This release has been tested on the below listed distros, and should work on mos
 
   - [Debian](https://debian.org/)
   - [Ubuntu](https://ubuntu.com/)
-  - [Windowsfx](https://windowsfx.org/)
 
 ## Quick Start
 
