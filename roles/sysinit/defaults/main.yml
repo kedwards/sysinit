@@ -1,5 +1,5 @@
 ---
-mise_plugins:
+sysinit_mise_plugins:
   - 1password-cli
   - amazon-ecr-credential-helper
   - awscli
@@ -30,8 +30,8 @@ mise_plugins:
   - uv
   - zellij
 
-mise_custom_plugins:
+sysinit_mise_custom_plugins:
   - {
-      plugin: "git-worktree-wrapper",
-      src: "https://github.com/kedwards/asdf-git-worktree-wrapper.git",
-    }
+    plugin: "git-worktree-wrapper",
+    src: "https://github.com/kedwards/asdf-git-worktree-wrapper.git",
+  }
