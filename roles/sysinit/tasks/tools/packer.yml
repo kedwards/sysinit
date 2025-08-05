@@ -1,23 +1,24 @@
 ---
 - name: Packer - Exists
-  stat:
+  ansible.builtin.stat:
     path: /usr/bin/packer
   register: packer_exists_result
 
-- block:
+- name: Packer installation block
+  when: not packer_exists_result.stat.exists or upgrade
+  block:
     - name: Packer - Get HashiCorp gpg
-      apt_key:
+      ansible.builtin.apt_key:
         url: https://apt.releases.hashicorp.com/gpg
         state: present
 
     - name: Packer - Add repository
-      apt_repository:
+      ansible.builtin.apt_repository:
         repo: "deb [arch=amd64] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
         state: present
 
     - name: Packer - Install/Upgrade
-      apt:
+      ansible.builtin.apt:
         update_cache: true
         pkg:
           - packer
-  when: packer_exists_result.stat.exists == false or upgrade == true

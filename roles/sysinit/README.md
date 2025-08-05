@@ -1,31 +1,83 @@
-Role Name
-=========
+sysinit
+=======
 
-A brief description of the role goes here.
+Ansible role for system initialization and tool installation.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- Ansible 2.9+
+- Target systems: Ubuntu, Debian, Arch Linux
+- Internet connectivity for downloading tools
+- GitHub API token (recommended for higher rate limits)
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+The following variables can be set to customize the role behavior:
+
+### Core Variables
+
+- `upgrade`: (boolean, default: `false`) - Forces reinstallation/upgrade of tools even if they already exist
+- `github_token`: (string, optional) - GitHub API token for accessing release information
+
+### AWS Vault Configuration
+
+- `aws_vault_skip_github_api`: (boolean, default: `false`) - Skip GitHub API lookup and use fixed version
+- `aws_vault_fixed_version`: (string, default: `"7.2.0"`) - Version to install when GitHub API is skipped
+
+**Important Behavior Note**: When `upgrade: true` is set, AWS Vault will be downloaded and installed regardless of the `aws_vault_skip_github_api` setting. This means:
+- If `aws_vault_skip_github_api: false` and `upgrade: true` → Uses latest version from GitHub API
+- If `aws_vault_skip_github_api: true` and `upgrade: true` → Uses fixed version specified in `aws_vault_fixed_version`
+
+### Mise Plugin Configuration
+
+- `sysinit_mise_plugins`: List of mise plugins to install
+- `sysinit_mise_custom_plugins`: List of custom mise plugin configurations
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+- `community.general` collection for GitHub release lookups
+- `ansible.builtin` modules
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Basic usage:
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+```yaml
+- hosts: servers
+  become: true
+  roles:
+    - sysinit
+```
+
+With custom configuration:
+
+```yaml
+- hosts: servers
+  become: true
+  vars:
+    upgrade: true
+    github_token: "{{ vault_github_token }}"
+    aws_vault_skip_github_api: false
+  roles:
+    - sysinit
+```
+
+For CI/Testing environments (using fixed versions):
+
+```yaml
+- hosts: servers
+  become: true
+  vars:
+    aws_vault_skip_github_api: true
+    aws_vault_fixed_version: "7.2.0"
+    upgrade: false  # Set to true to force reinstall with fixed version
+  roles:
+    - sysinit
+```
 
 License
 -------

@@ -11,11 +11,13 @@
   register: kubectl_exists_result
 
 - name: Kubectl - Install/Upgrade
+  when: not kubectl_exists_result.stat.exists or upgrade
   block:
     - name: "Kubectl - Download version file"
       ansible.builtin.get_url:
         url: https://storage.googleapis.com/kubernetes-release/release/stable.txt
         dest: "{{ tmpdir.path }}/minikube_version"
+        mode: '0644'
 
     - name: "Kubectl - Read Latest version from file"
       ansible.builtin.slurp:
@@ -30,11 +32,10 @@
       ansible.builtin.get_url:
         url: "https://storage.googleapis.com/kubernetes-release/release/{{ kubectl_latest_version }}/bin/linux/amd64/kubectl"
         dest: /usr/local/bin/kubectl
-        mode: 0755
-        force: True
-  when: kubectl_exists_result.stat.exists == false or upgrade == true
+        mode: '0755'
+        force: true
 
 - name: Remove temporary directory
   ansible.builtin.file:
     path: "{{ tmpdir.path }}"
-    state: "absent"
+    state: absent

@@ -73,7 +73,9 @@ cd "$script_dir"
 mise trust -a
 mise use --global uv
 uv venv --clear
-source .venv/bin/activate
+
+# shellcheck disable=SC1091
+source ".venv/bin/activate"
 uv pip install -e .
 
 ansible-playbook playbook.yml -K --ask-vault-pass

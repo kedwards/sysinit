@@ -3,3 +3,4 @@ logs/*
 .direnv
 **/*.egg-info
 !**/README.md
+**/.venv

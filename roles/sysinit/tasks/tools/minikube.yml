@@ -5,15 +5,16 @@
   register: minikube_exists_result
 
 - name: Minikube - get latest version
-  when: minikube_exists_result.stat.exists != false and upgrade == true
+  when: minikube_exists_result.stat.exists and upgrade
   block:
     - name: Minikube - Get installed version
       ansible.builtin.command: minikube version
       register: minikube_version_result
+      changed_when: false
 
     - name: Minikube - Set found version
       ansible.builtin.set_fact:
-        minikube_found_version: "{{ minikube_version_result.stdout_lines[0]| regex_search(regexp,'\\1') }}"
+        minikube_found_version: "{{ minikube_version_result.stdout_lines[0] | regex_search(regexp, '\\1') }}"
       vars:
         regexp: 'minikube\sversion:\s(.*)$'
 
@@ -22,7 +23,7 @@
         minikube_installed_version: "{{  minikube_found_version[0] }}"
 
 - name: Minikube - Install/Upgrade
-  when: minikube_exists_result.stat.exists == false or upgrade == true
+  when: not minikube_exists_result.stat.exists or upgrade
   block:
     - name: Minikube - Get latest
       community.general.github_release:
@@ -40,5 +41,5 @@
       ansible.builtin.get_url:
         url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
         dest: /usr/local/bin/minikube
-        mode: 0755
+        mode: '0755'
         force: true

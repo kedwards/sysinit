@@ -4,10 +4,24 @@
     path: "/etc/apt/keyrings/{{ item.name }}.gpg"
   register: gpg_files
 
-- name: "Add GPG key for {{ ansible_distribution }}"
-  ansible.builtin.shell: >
-    curl -fsSL {{ item.key_url }} | gpg --dearmor | sudo tee /etc/apt/keyrings/{{ item.name }}.gpg > /dev/null
-  when: gpg_filesstat.exist is not defined or not gpg_files.stat.exists
+- name: "Download GPG key for {{ ansible_distribution }}"
+  ansible.builtin.get_url:
+    url: "{{ item.key_url }}"
+    dest: "/tmp/{{ item.name }}.key"
+    mode: '0644'
+  when: gpg_files.stat.exists is not defined or not gpg_files.stat.exists
+
+- name: "Convert and import GPG key for {{ ansible_distribution }}"
+  ansible.builtin.command:
+    cmd: "gpg --dearmor --output /etc/apt/keyrings/{{ item.name }}.gpg /tmp/{{ item.name }}.key"
+    creates: "/etc/apt/keyrings/{{ item.name }}.gpg"
+  when: gpg_files.stat.exists is not defined or not gpg_files.stat.exists
+
+- name: "Clean up temporary GPG key file"
+  ansible.builtin.file:
+    path: "/tmp/{{ item.name }}.key"
+    state: absent
+  when: gpg_files.stat.exists is not defined or not gpg_files.stat.exists
 
 - name: Fix keyring permissions
   ansible.builtin.file:

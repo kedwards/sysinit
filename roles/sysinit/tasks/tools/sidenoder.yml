@@ -8,5 +8,5 @@
   ansible.builtin.get_url:
     url: https://github.com/VRPirates/sidenoder/releases/download/v0.9.1/sidenoder-0.9.1-amd64.AppImage
     dest: /usr/local/bin/sidenoder
-    mode: 0755
-  when: sidenoder_exists_result.stat.exists == false or upgrade == true
+    mode: '0755'
+  when: not sidenoder_exists_result.stat.exists or upgrade

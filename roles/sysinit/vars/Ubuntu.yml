@@ -16,7 +16,6 @@ sysinit_packages:
   - libsqlite3-dev
   - libxml2-dev
   - libxmlsec1-dev
-  - starship
   - stow
   - tk-dev
   - xsel
@@ -28,3 +27,4 @@ sysinit_tools:
   - docker
   - mise
   - opass
+  - starship
