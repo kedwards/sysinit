@@ -1,13 +1,14 @@
 ---
-- name: System info
+- name: Display system info
   ansible.builtin.debug:
-    msg: |
-      User: "{{ ansible_user_id }}"
-      Sudo User: "{{ lookup('env','USER') }}"
-      System: "{{ ansible_system }}"
-      Architecture: "{{ ansible_userspace_architecture }}"
-      Distribution: "{{ ansible_distribution }}"
-      Release: "{{ ansible_distribution_release }}"
+    msg:
+      - "User: {{ lookup('env', 'USER') }}"
+      - "Home: {{ ansible_env.SUDO_HOME }}"
+      - "System: {{ ansible_system }}"
+      - "Architecture: {{ ansible_userspace_architecture }}"
+      - "Distribution: {{ ansible_distribution }}"
+      - "Release: {{ ansible_distribution_release }}"
+      - "Sysinit: {{ sysinit_var }}"
 
 - name: Load variables
   ansible.builtin.include_vars: "{{ ansible_distribution }}.yml"
@@ -19,13 +20,14 @@
 
 - name: Install Debian community or private matained packages
   ansible.builtin.include_tasks: "tools/apt.yml"
-  loop: "{{ apt_packages|default([]) }}"
+  loop: "{{ apt_packages | default([]) }}"
   when: ansible_distribution == 'Debian'
-  
+
 - name: Install Arch aur packages
   ansible.builtin.include_tasks: "tools/aur.yml"
   when: ansible_distribution == 'Archlinux'
 
 - name: Install tools
   ansible.builtin.include_tasks: "tools/{{ item }}.yml"
-  loop: "{{ tools|default([]) }}"
+  loop: "{{ combined_tools | default([]) }}"
+  when: combined_tools is defined and combined_tools | length > 0

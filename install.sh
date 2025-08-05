@@ -1,14 +1,18 @@
 #!/bin/bash
 
-sysinit_path="$HOME/sysinit"
-packages="curl git"
+set -euo pipefail
+
+script_dir="$(dirname "$(realpath "$0")")"
+packages="curl git gpg"
 
 trap cleanup ERR EXIT
 
 cleanup() {
-  if command -v deactivate &>/dev/null; then
+  if command -v deactivate >/dev/null; then
     deactivate
   fi
+  sudo rm -rf "$script_dir/.venv"
+  rm -f "$script_dir/mise_install.sh"
 }
 
 function getPackageManager() {
@@ -43,22 +47,21 @@ case $(getPackageManager) in
   ;;
 esac
 
-curl https://mise.run | sh
-eval "$(~/.local/bin/mise activate bash)"
+# Install mise
+gpg --keyserver hkps://keyserver.ubuntu.com --recv-keys 0x7413A06D
+curl https://mise.jdx.dev/install.sh.sig | gpg --decrypt >"$script_dir/mise_install.sh"
+sh "$script_dir/mise_install.sh"
+
+# Add mise to PATH and activate it
+export PATH="$HOME/.local/bin:$PATH"
+echo "eval \"\$($HOME/.local/bin/mise activate bash)\"" >>~/.bashrc
+eval "$("$HOME"/.local/bin/mise activate bash)"
+
+# Install uv
+mise trust -a
 mise use --global uv
+uv venv --clear
+source .venv/bin/activate
+uv pip install --group dev
 
-if [ ! -d "$HOME/.venv/sysinit" ]; then
-  uv venv "$HOME/.venv/sysinit"
-fi
-source "$HOME/.venv/sysinit/bin/activate"
-
-if [ -d "${sysinit_path}" ]; then
-  git -C "${sysinit_path}" pull
-else
-  git clone -b main --single-branch https://github.com/kedwards/sysinit.git "$sysinit_path"
-fi
-
-uv pip install -r "${sysinit_path}/requirements.txt"
-
-cd "${sysinit_path}" || exit 1
 ansible-playbook playbook.yml -K --ask-vault-pass
