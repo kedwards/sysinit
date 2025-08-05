@@ -1,5 +1,5 @@
 ---
-packages:
+sysinit_packages:
   - amazon-ecr-credential-helper
   - apt-transport-https
   - asciinema
@@ -25,12 +25,7 @@ packages:
   - xz-utils
   - zlib1g-dev
 
-apt_packages:
-  - name: ghostty
-    key_url: https://download.opensuse.org/repositories/home:clayrisser:bookworm/Debian_12/Release.key
-    repo: "http://download.opensuse.org/repositories/home:/clayrisser:/bookworm/Debian_12/ /"
-
-tools:
+sysinit_tools:
   - aws-ssm
   - bash-my-aws
   - docker

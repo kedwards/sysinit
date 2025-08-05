@@ -15,12 +15,12 @@
 
 - name: Install system packages
   ansible.builtin.package:
-    name: "{{ packages }}"
+    name: "{{ sysinit_packages }}"
     state: present
 
 - name: Install Debian community or private matained packages
   ansible.builtin.include_tasks: "tools/apt.yml"
-  loop: "{{ apt_packages | default([]) }}"
+  loop: "{{ sysinit_apt_packages | default([]) }}"
   when: ansible_distribution == 'Debian'
 
 - name: Install Arch aur packages
