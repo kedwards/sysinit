@@ -26,6 +26,4 @@ sysinit_tools:
   - aws-ssm
   - docker
   - mise
-  - opass
-  - starship
   - warp-terminal
