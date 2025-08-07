@@ -5,14 +5,14 @@
   register: sidenoder_exists_result
 
 - name: Sidenoder - Install
-  when: not sidenoder_exists_result.stat.exists or upgrade
+  when: not sidenoder_exists_result.stat.exists or (upgrade | default(false))
   block:
     - name: Sidenoder - Get latest
       community.general.github_release:
         user: VRPirates
         repo: sidenoder
         action: latest_release
-        token: "{{ github_token | default('') }}"
+        token: "{{ github_token | default(omit) }}"
       register: sidenoder_latest_version_result
 
     - name: Sidenoder - Set latest version
@@ -22,7 +22,7 @@
     - name: Sidenoder - Install/Upgrade
       ansible.builtin.get_url:
         url: >
-          https://github.com/VRPirates/sidenoder/releases/download/
-          {{ sidenoder_latest_version_result.tag }}/sidenoder-{{sidenoder_latest_version_result.tag}}-amd64.AppImage
-        dest: /usr/local/bin/aws-vault
-        mode: 'u+x,g+x,o+x'
+          https://github.com/VRPirates/sidenoder/releases/download/{{ sidenoder_latest_version_result.tag }}/
+          sidenoder-{{ sidenoder_latest_version_result.tag }}-amd64.AppImage
+        dest: /usr/local/bin/sidenoder
+        mode: '0755'

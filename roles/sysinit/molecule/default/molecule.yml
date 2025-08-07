@@ -26,15 +26,10 @@ provisioner:
         ansible_user: root
         github_token: ""
         upgrade: false
-        tools:
-          - starship
-          - aws-vault
-          - terraform
-          - docker
   config_options:
     defaults:
       callbacks_enabled: profile_tasks
-      roles_path: /home/kedwards/dev/sysinit/feature.cleanup/roles
+      roles_path: ../../
 verifier:
   name: ansible
 lint: |

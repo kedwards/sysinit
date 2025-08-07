@@ -35,12 +35,6 @@
         groups: sudo
         append: true
 
-    - name: Remove any existing .local/bin file (in case it was created incorrectly)
-      ansible.builtin.file:
-        path: /home/kedwards/.local/bin
-        state: absent
-      failed_when: false
-
     - name: Create .local directory structure for test user
       ansible.builtin.file:
         path: /home/kedwards/.local

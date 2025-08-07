@@ -4,9 +4,7 @@
   become: true
   vars:
     sysinit_var: "molecule_test"
-    aws_vault_skip_github_api: true
-    aws_vault_fixed_version: "7.2.0"
-    upgrade: false          # When true, forces download using fixed version above
+    upgrade: false
     github_token: ""
   roles:
     - role: sysinit

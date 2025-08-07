@@ -3,8 +3,6 @@
   hosts: all
   become: true
   gather_facts: false
-  vars:
-    aws_vault_skip_github_api: true  # This should match the converge playbook setting
   tasks:
     - name: Verify system packages are installed
       ansible.builtin.package_facts:
@@ -29,15 +27,3 @@
         - /usr/local/bin/starship
         - /usr/local/bin/aws-vault
       when: "'starship' in tools or 'aws-vault' in tools"
-
-    - name: Assert no GitHub API calls were made
-      ansible.builtin.debug:
-        msg: "SUCCESS: No GitHub API calls detected during role execution"
-      vars:
-        github_api_avoided: true
-      when: aws_vault_skip_github_api is defined and aws_vault_skip_github_api
-
-    - name: Fail if GitHub API calls were expected but skip flag not set
-      ansible.builtin.fail:
-        msg: "FAILURE: Expected aws_vault_skip_github_api to be true but it was not set properly"
-      when: not (aws_vault_skip_github_api is defined and aws_vault_skip_github_api)
