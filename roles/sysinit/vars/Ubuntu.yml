@@ -28,3 +28,4 @@ sysinit_tools:
   - mise
   - opass
   - starship
+  - warp-terminal

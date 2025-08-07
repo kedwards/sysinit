@@ -26,5 +26,3 @@ sysinit_aur_packages:
 sysinit_tools:
   - bash-my-aws
   - mise
-
-sysinit_warp_url: https://releases.warp.dev/stable/v0.2025.04.16.08.11.stable_02/warp-terminal-v0.2025.04.16.08.11.stable_02-1-x86_64.pkg.tar.zst

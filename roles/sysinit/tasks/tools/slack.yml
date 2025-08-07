@@ -11,4 +11,4 @@
 - name: Slack - Install/Upgrade
   ansible.builtin.apt:
     deb: "https://downloads.slack-edge.com/releases/linux/{{ slack_version }}/prod/x64/slack-desktop-{{ slack_version }}-amd64.deb"
-  when: not slack_exists_result.stat.exists or upgrade
+  when: (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and (not slack_exists_result.stat.exists or upgrade)

@@ -1,9 +1,0 @@
----
-- name: System Initialization Test
-  hosts: localhost
-  remote_user: root
-  vars:
-    upgrade: true           # Forces download/reinstall using GitHub API (latest version)
-    github_token: "{{ vault_github_token }}"
-  roles:
-    - sysinit

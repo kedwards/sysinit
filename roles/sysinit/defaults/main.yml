@@ -1,8 +1,10 @@
 ---
 sysinit_mise_plugins:
+  - 1password
   - 1password-cli
   - amazon-ecr-credential-helper
   - awscli
+  - aws-vault
   - bat
   - direnv
   - eksctl
@@ -19,12 +21,16 @@ sysinit_mise_plugins:
   - kubectx
   - kubens
   - minikube
+  - mkcert
   - neovim
   - nodejs
+  - packer
   - python
   - rclone
   - ripgrep
   - starship
+  - terraform
+  - terragrunt
   - usage
   - tmux
   - uv
