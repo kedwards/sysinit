@@ -25,7 +25,7 @@ sysinit_mise_plugins:
   - neovim
   - nodejs
   - packer
-  - python
+  - python@3.11
   - rclone
   - ripgrep
   - starship

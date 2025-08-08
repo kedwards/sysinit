@@ -31,5 +31,3 @@ sysinit_tools:
   - docker
   - dropbox
   - mise
-  - opass
-  - warp-terminal

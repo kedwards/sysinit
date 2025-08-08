@@ -35,14 +35,6 @@
         groups: sudo
         append: true
 
-    - name: Create .local directory structure for test user
-      ansible.builtin.file:
-        path: /home/kedwards/.local
-        state: directory
-        mode: '0755'
-        owner: kedwards
-        group: kedwards
-
     - name: Create .local/bin directory for test user
       ansible.builtin.file:
         path: /home/kedwards/.local/bin
@@ -50,6 +42,7 @@
         mode: '0755'
         owner: kedwards
         group: kedwards
+        recurse: true
 
     - name: Set ownership of user home directory
       ansible.builtin.file:
