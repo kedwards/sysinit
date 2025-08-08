@@ -1,21 +1,28 @@
 ---
+- name: "Check if docker GPG keyring exists"
+  ansible.builtin.stat:
+    path: /etc/apt/keyrings/docker.gpg
+  register: docker_keyring_exists
+
 - name: "Add docker official GPG key for {{ ansible_distribution }}"
   ansible.builtin.get_url:
     url: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
     dest: /tmp/docker.gpg
     mode: '0644'
   register: docker_gpg_download
+  when: not docker_keyring_exists.stat.exists
 
 - name: "Import docker GPG key for {{ ansible_distribution }}"
   ansible.builtin.command:
     cmd: gpg --dearmor -o /etc/apt/keyrings/docker.gpg /tmp/docker.gpg
     creates: /etc/apt/keyrings/docker.gpg
-  when: docker_gpg_download is succeeded
+  when: not docker_keyring_exists.stat.exists and docker_gpg_download is succeeded
 
 - name: Remove temporary GPG key file
   ansible.builtin.file:
     path: /tmp/docker.gpg
     state: absent
+  when: not docker_keyring_exists.stat.exists and docker_gpg_download is defined
 
 - name: Fix keyring permissions
   ansible.builtin.file:

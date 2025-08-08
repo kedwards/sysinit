@@ -6,24 +6,11 @@
   tasks:
     - name: Verify system packages are installed
       ansible.builtin.package_facts:
-      register: package_facts
 
-    - name: Check that basic tools are installed
-      ansible.builtin.stat:
-        path: "{{ item }}"
-      register: tool_check
-      failed_when: not tool_check.stat.exists
+    - name: Fail if required package is not installed
+      ansible.builtin.fail:
+        msg: "Required package '{{ item }}' is not installed."
+      when: item not in ansible_facts.packages
       loop:
-        - /usr/local/bin/starship
-        - /usr/local/bin/aws-vault
-      when: "'starship' in tools or 'aws-vault' in tools"
-
-    - name: Verify tools are executable
-      ansible.builtin.command: "{{ item }} --version"
-      register: version_check
-      failed_when: version_check.rc != 0
-      changed_when: false
-      loop:
-        - /usr/local/bin/starship
-        - /usr/local/bin/aws-vault
-      when: "'starship' in tools or 'aws-vault' in tools"
+        - docker
+        - curl
