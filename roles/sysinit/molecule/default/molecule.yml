@@ -20,16 +20,16 @@ platforms:
       - SYS_ADMIN
 provisioner:
   name: ansible
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../roles
+  log: true
   inventory:
     host_vars:
       sysinit-ubuntu-22:
         ansible_user: root
-        github_token: ""
-        upgrade: false
   config_options:
     defaults:
       callbacks_enabled: profile_tasks
-      roles_path: ../../
 verifier:
   name: ansible
 lint: |
