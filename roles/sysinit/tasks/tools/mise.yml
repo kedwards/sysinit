@@ -85,20 +85,22 @@
       when: sysinit_mise_custom_plugins is defined and sysinit_mise_custom_plugins | length > 0
 
     - name: Mise - Install default plugins
-      ansible.builtin.shell: |
-        set -euo pipefail
-        # Extract the base plugin name for version-specific plugins
-        PLUGIN_BASE=$(echo '{{ plugin_item }}' | cut -d'@' -f1)
-        # Try multiple detection methods
-        if {{ mise_bin }} which $PLUGIN_BASE >/dev/null 2>&1 || \
-           {{ mise_bin }} current $PLUGIN_BASE >/dev/null 2>&1 || \
-           ([ -f "$HOME/.config/mise/config.toml" ] && grep -q "$PLUGIN_BASE" "$HOME/.config/mise/config.toml") || \
-           {{ mise_bin }} ls --installed | grep -q "^$PLUGIN_BASE"; then
-          echo "already_present"
-        else
-          {{ mise_bin }} use -g -y {{ plugin_item }}
-          echo "installed"
-        fi
+      ansible.builtin.shell:
+        cmd: |
+          set -o pipefail
+          # Extract the base plugin name for version-specific plugins
+          PLUGIN_BASE=$(echo '{{ plugin_item }}' | cut -d'@' -f1)
+          # Try multiple detection methods
+          if {{ mise_bin }} which $PLUGIN_BASE >/dev/null 2>&1 || \
+            {{ mise_bin }} current $PLUGIN_BASE >/dev/null 2>&1 || \
+            ([ -f "$HOME/.config/mise/config.toml" ] && grep -q "$PLUGIN_BASE" "$HOME/.config/mise/config.toml") || \
+            {{ mise_bin }} ls --installed | grep -q "^$PLUGIN_BASE"; then
+            echo "already_present"
+          else
+            {{ mise_bin }} use -g -y {{ plugin_item }}
+            echo "installed"
+          fi
+        executable: /bin/bash
       register: plugin_install_result
       changed_when: "'installed' in plugin_install_result.stdout"
       failed_when: plugin_install_result.rc != 0

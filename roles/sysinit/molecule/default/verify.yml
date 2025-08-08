@@ -12,5 +12,6 @@
         msg: "Required package '{{ item }}' is not installed."
       when: item not in ansible_facts.packages
       loop:
-        - docker
         - curl
+        - git
+        - gpg
