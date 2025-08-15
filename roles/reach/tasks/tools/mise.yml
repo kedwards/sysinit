@@ -92,15 +92,31 @@
       # change_when: custom_plugin_result.rc == 0 and 'already exists' not in custom_plugin_result.stderr
 
     - name: Mise - Install Plugins
-      ansible.builtin.shell: >
-        if [ ! -d "$HOME/.local/share/mise/plugins/{{ plugin_item }}" ]; then
-          {{ mise_bin }} use -g -y {{ plugin_item }}
+      ansible.builtin.shell: |
+        PLUGIN_BASE=$(echo '{{ plugin_item }}' | cut -d'@' -f1)
+        # Handle special cases where plugin name differs from command name
+        if [ "$PLUGIN_BASE" = "nodejs" ]; then
+          CHECK_NAME="node"
+        else
+          CHECK_NAME="$PLUGIN_BASE"
         fi
+        
+        if {{ mise_bin }} ls --installed | grep -q "^$CHECK_NAME\s"; then
+          echo "already_installed: $PLUGIN_BASE (as $CHECK_NAME)"
+          exit 0
+        else
+          echo "installing: $PLUGIN_BASE"
+          {{ mise_bin }} use -g -y {{ plugin_item }}
+          echo "installed: $PLUGIN_BASE"
+          exit 0
+        fi
+      args:
+        executable: /bin/bash
       loop_control:
         loop_var: plugin_item
       loop: "{{ sysinit_mise_plugins }}"
-      # register: standard_plugin_result
-      # changed_when: standard_plugin_result.rc == 0 and standard_plugin_result.stdout != ""
+      register: plugin_install_result
+      changed_when: "'installing:' in plugin_install_result.stdout"
 
 # - name: Mise - Configure shell environment
 #   ansible.builtin.lineinfile:
