@@ -1,0 +1,60 @@
+---
+# handlers file for sysinit roles
+# Contains restart tasks and other handlers that can be triggered by tasks
+
+# Sample handler for rescanning devops configurations
+- name: Rescan devops
+  command: systemctl daemon-reload
+  become: yes
+  listen: "rescan devops"
+
+# Placeholder handlers for common restart tasks
+# Uncomment and modify as needed
+
+# - name: restart nginx
+#   service:
+#     name: nginx
+#     state: restarted
+#   become: yes
+#   listen: "restart web server"
+
+# - name: restart apache
+#   service:
+#     name: apache2
+#     state: restarted
+#   become: yes
+#   listen: "restart web server"
+
+# - name: restart ssh
+#   service:
+#     name: ssh
+#     state: restarted
+#   become: yes
+#   listen: "restart ssh"
+
+# - name: restart docker
+#   service:
+#     name: docker
+#     state: restarted
+#   become: yes
+#   listen: "restart docker"
+
+# - name: reload systemd
+#   systemd:
+#     daemon_reload: yes
+#   become: yes
+#   listen: "reload systemd"
+
+# - name: restart network
+#   service:
+#     name: networking
+#     state: restarted
+#   become: yes
+#   listen: "restart network"
+
+# - name: restart firewall
+#   service:
+#     name: ufw
+#     state: restarted
+#   become: yes
+#   listen: "restart firewall"
