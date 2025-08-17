@@ -8,6 +8,7 @@
   ansible.builtin.package:
     name: locales
     state: present
+  when: ansible_distribution in ['Debian', 'Ubuntu']
 
 - name: Configure system locale
   ansible.builtin.locale_gen:

@@ -102,6 +102,7 @@ install_mise() {
 # Clone or pull sysinit repo
 sync_repo() {
   if [[ -d "$script_dir" ]]; then
+    # @TODO: save users changes if any
     git -C "$script_dir" pull
   else
     git clone -b main --single-branch $SYSINIT_REPO "$script_dir"
@@ -120,8 +121,69 @@ setup_python_env() {
   uv pip install -e .
 }
 
+# Setup SSH agent for GitHub access
+setup_ssh_agent() {
+  local ssh_env="$HOME/.ssh/agent-env"
+
+  echo "Setting up SSH agent for Ansible..."
+
+  # Start SSH agent if not running
+  if [ -f "$ssh_env" ]; then
+    source "$ssh_env" >/dev/null
+    if ! kill -0 "$SSH_AGENT_PID" 2>/dev/null; then
+      echo "Starting new SSH agent..."
+      ssh-agent >"$ssh_env"
+      chmod 600 "$ssh_env"
+      source "$ssh_env" >/dev/null
+    else
+      echo "SSH agent already running (PID: $SSH_AGENT_PID)"
+    fi
+  else
+    echo "Starting SSH agent..."
+    ssh-agent >"$ssh_env"
+    chmod 600 "$ssh_env"
+    source "$ssh_env" >/dev/null
+  fi
+
+  # Check if keys are loaded
+  if ! ssh-add -l >/dev/null 2>&1; then
+    echo "No SSH keys loaded. Attempting to add keys..."
+
+    # Try to add keys
+    for key in ~/.ssh/id_rsa ~/.ssh/id_ed25519; do
+      if [ -f "$key" ]; then
+        echo "Adding key: $key"
+        if ssh-add "$key"; then
+          echo "Successfully added $key"
+          break
+        else
+          echo "Failed to add $key (wrong passphrase or other error)"
+        fi
+      fi
+    done
+
+    # Check again if keys are loaded
+    if ! ssh-add -l >/dev/null 2>&1; then
+      echo "No SSH keys are loaded in the agent."
+      echo "Please manually add your key:"
+      echo "  source $ssh_env && ssh-add ~/.ssh/id_rsa"
+      echo "Then run this script again."
+      exit 1
+    fi
+  else
+    echo "SSH keys are loaded:"
+    ssh-add -l
+  fi
+
+  # Export environment for Ansible
+  export SSH_AUTH_SOCK
+  export SSH_AGENT_PID
+}
+
 # Run ansible playbook
 run_ansible() {
+  echo ""
+  echo "🚀 Running Ansible playbook..."
   ansible-playbook playbook.yml -K
 }
 
@@ -130,4 +192,5 @@ install_packages
 install_mise
 # sync_repo
 setup_python_env
+setup_ssh_agent
 run_ansible
