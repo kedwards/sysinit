@@ -1,0 +1,33 @@
+{"level":"debug","ts":"2025-08-17T13:44:36Z","msg":"profile registry not configured. Skipping auto sync."}
+{"level":"debug","ts":"2025-08-17T13:44:36Z","msg":"process args","execFlag":"","osargs":["assumego","ps"],"c.args":["ps"]}
+{"level":"debug","ts":"2025-08-17T13:44:36Z","msg":"processed profile nameps"}
+{"level":"debug","ts":"2025-08-17T13:44:36Z","msg":"exec config:<nil>"}
+{"level":"warn","ts":"2025-08-17T13:44:36Z","msg":"error retrieving IAM Identity Center token from secure storage: The specified item could not be found in the keyring"}
+{"level":"debug","ts":"2025-08-17T13:44:36Z","msg":"update required: false, message: "}
+{"level":"debug","ts":"2025-08-17T13:44:37Z","msg":"storing user codes in keychain","codes":{"codes":[{"code":"XVBR-QVQS","expiry":"2025-08-17T07:54:36.908869611-06:00"}]}}
+{"level":"info","ts":"2025-08-17T13:44:37Z","msg":"If the browser does not open automatically, please open this link: https://d-9067677dc9.awsapps.com/start/#/device?user_code=XVBR-QVQS"}
+{"level":"debug","ts":"2025-08-17T13:44:37Z","msg":"exec: \"xdg-open,x-www-browser,www-browser\": executable file not found in $PATH"}
+{"level":"info","ts":"2025-08-17T13:44:37Z","msg":"Awaiting AWS authentication in the browser"}
+{"level":"info","ts":"2025-08-17T13:44:37Z","msg":"You will be prompted to authenticate with AWS in the browser, then you will be prompted to 'Allow'"}
+{"level":"info","ts":"2025-08-17T13:44:37Z","msg":"Code: XVBR-QVQS"}
+{"level":"debug","ts":"2025-08-17T13:51:06Z","msg":"received a No Access error","error":"no access: operation error SSO: GetRoleCredentials, https response error StatusCode: 403, RequestID: ba852424-b497-44e2-a57d-72204b90108f, api error ForbiddenException: No access"}
+{"level":"debug","ts":"2025-08-17T13:51:06Z","msg":"skipping loading Common Fate SDK from URL","reason":"profile does not have key common_fate_url","profile_keys":["sso_start_url","sso_region","sso_account_id","sso_role_name","granted_color","granted_icon"]}
+{"level":"debug","ts":"2025-08-17T13:51:06Z","msg":"configured config sources","sources":["env","file"]}
+{"level":"debug","ts":"2025-08-17T13:51:06Z","msg":"loading config","path":"/home/kedwards/.cf/config"}
+{"level":"debug","ts":"2025-08-17T13:51:06Z","msg":"failed to load cfconfig, skipping check for active grants in a common fate deployment","error":"config file does not exist"}
+{"level":"error","ts":"2025-08-17T13:51:06Z","msg":"no access: operation error SSO: GetRoleCredentials, https response error StatusCode: 403, RequestID: ba852424-b497-44e2-a57d-72204b90108f, api error ForbiddenException: No access"}
+{"level":"debug","ts":"2025-08-17T13:51:22Z","msg":"profile registry not configured. Skipping auto sync."}
+{"level":"debug","ts":"2025-08-17T13:51:22Z","msg":"process args","execFlag":"","osargs":["assumego","ps"],"c.args":["ps"]}
+{"level":"debug","ts":"2025-08-17T13:51:22Z","msg":"processed profile nameps"}
+{"level":"debug","ts":"2025-08-17T13:51:22Z","msg":"exec config:<nil>"}
+{"level":"debug","ts":"2025-08-17T13:51:23Z","msg":"received a No Access error","error":"no access: operation error SSO: GetRoleCredentials, https response error StatusCode: 403, RequestID: f90d1610-7b84-4b34-925f-1fce313a3222, api error ForbiddenException: No access"}
+{"level":"debug","ts":"2025-08-17T13:51:23Z","msg":"skipping loading Common Fate SDK from URL","reason":"profile does not have key common_fate_url","profile_keys":["sso_start_url","sso_region","sso_account_id","sso_role_name","granted_color","granted_icon"]}
+{"level":"debug","ts":"2025-08-17T13:51:23Z","msg":"configured config sources","sources":["env","file"]}
+{"level":"debug","ts":"2025-08-17T13:51:23Z","msg":"loading config","path":"/home/kedwards/.cf/config"}
+{"level":"debug","ts":"2025-08-17T13:51:23Z","msg":"failed to load cfconfig, skipping check for active grants in a common fate deployment","error":"config file does not exist"}
+{"level":"error","ts":"2025-08-17T13:51:23Z","msg":"no access: operation error SSO: GetRoleCredentials, https response error StatusCode: 403, RequestID: f90d1610-7b84-4b34-925f-1fce313a3222, api error ForbiddenException: No access"}
+{"level":"debug","ts":"2025-08-17T13:54:42Z","msg":"profile registry not configured. Skipping auto sync."}
+{"level":"debug","ts":"2025-08-17T13:54:42Z","msg":"process args","execFlag":"","osargs":["assumego","ps"],"c.args":["ps"]}
+{"level":"debug","ts":"2025-08-17T13:54:42Z","msg":"processed profile nameps"}
+{"level":"debug","ts":"2025-08-17T13:54:42Z","msg":"exec config:<nil>"}
+{"level":"info","ts":"2025-08-17T13:54:43Z","logger":"clio.success","msg":"[ps](us-east-1) session credentials will expire in 1 hour"}

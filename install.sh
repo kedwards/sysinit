@@ -128,6 +128,6 @@ run_ansible() {
 # Main
 install_packages
 install_mise
-sync_repo
+# sync_repo
 setup_python_env
 run_ansible

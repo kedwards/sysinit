@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+export WINDOWSUSER=
+export GRANTED_ALIAS_CONFIGURED=true
+export STARSHIP_CONFIG=~/.config/starship.toml
+
+# Detects the shell type (Bash or Zsh) and sets the SHELL_TYPE variable accordingly.
+if [[ -n "$BASH_VERSION" ]]; then
+  SHELL_TYPE="bash"
+elif [[ -n "$ZSH_VERSION" ]]; then
+  SHELL_TYPE="zsh"
+else
+  echo "Unsupported shell detected. This script is designed for Bash and Zsh."
+  exit 1
+fi
+
+# https://mise.jdx.dev/
+if command -v mise &>/dev/null; then
+  eval "$(mise activate "$SHELL_TYPE")"
+  MISE_INSTALLS="$HOME/.local/share/mise/installs"
+fi
+
+command -v aws &>/dev/null || mise use --global awscli -y &>/dev/null
+command -v granted &>/dev/null || mise use --global granted -y &>/dev/null
+command -v python &>/dev/null || mise use --global python@3.11 -y &>/dev/null
+command -v starship &>/dev/null || mise use --global starship -y &>/dev/null
+
+# https://starship.rs/
+mise_version=$(mise tool starship | grep 'Active Version' | awk '{print $3 }')
+eval -- "$($MISE_INSTALLS/starship/latest/starship init "$SHELL_TYPE")"
+
+# Enables command completions for Bash and Zsh.
+if [[ "$SHELL_TYPE" == "bash" ]]; then
+  [ -f /etc/bash_completion ] && source /etc/bash_completion
+  mkdir -p "$HOME/.local/share/bash-completion/completions"
+  docker completion bash >"$HOME/.local/share/bash-completion/completions/docker"
+
+elif [[ "$SHELL_TYPE" == "zsh" ]]; then
+  mkdir -p "$HOME/.docker/completions"
+  docker completion zsh >"$HOME/.docker/completions/_docker"
+
+  FPATH="$HOME/.docker/completions:$FPATH"
+  autoload bashcompinit && bashcompinit
+  autoload -Uz compinit && compinit
+fi
+complete -C "$MISE_INSTALLS/awscli/latest/aws/dist/aws_completer" aws

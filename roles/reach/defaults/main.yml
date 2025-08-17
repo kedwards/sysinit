@@ -35,11 +35,21 @@ sysinit_mise_plugins:
   - github-cli
   - granted
   - jq
-  - nodejs
+  - node
   - python@3.11
   - starship
   - usage
 
 # SSH Configuration
-# Set this variable to your SSH key passphrase to enable automatic SSH agent setup
+# Set this variable to your SSH key passphrase 
+# to enable automatic SSH agent setup
 # ssh_key_passphrase: "your_passphrase_here"
+
+# Git configuration template variables
+git_user_email: ""
+git_user_name: ""
+git_signing_key: ""
+
+# AWS SSO configuration
+# Set the role suffix for AWS SSO roles (dev, devops)
+aws_sso_role_suffix: "dev"

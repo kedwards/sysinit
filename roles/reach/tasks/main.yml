@@ -17,20 +17,20 @@
 - name: Load variables
   ansible.builtin.include_vars: "{{ ansible_distribution }}.yml"
 
-- name: Install system packages
-  ansible.builtin.package:
-    name: "{{ sysinit_packages }}"
-    state: present
+# - name: Install system packages
+#   ansible.builtin.package:
+#     name: "{{ sysinit_packages }}"
+#     state: present
 
-- name: Install community or private packages
-  ansible.builtin.include_tasks: "apt.yml"
-  loop: "{{ sysinit_custom_apt_packages | default([]) }}"
-  when: ansible_distribution == 'Debian'
+# - name: Install community or private packages
+#   ansible.builtin.include_tasks: "apt.yml"
+#   loop: "{{ sysinit_custom_apt_packages | default([]) }}"
+#   when: ansible_distribution == 'Debian'
 
-- name: Install tools
-  ansible.builtin.include_tasks: "tools/{{ item }}.yml"
-  loop: "{{ combined_tools | default([]) }}"
-  when: combined_tools is defined and combined_tools | length > 0
+# - name: Install tools
+#   ansible.builtin.include_tasks: "tools/{{ item }}.yml"
+#   loop: "{{ combined_tools | default([]) }}"
+#   when: combined_tools is defined and combined_tools | length > 0
 
 - name: Configure Reach local development
   ansible.builtin.include_tasks: "reach/main.yml"
