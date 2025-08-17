@@ -100,8 +100,8 @@
 
 [user]
   # these are about the most basic and should pretty much always exist
-  email = 
-  name = 
+	email = kedwards@kevinedwards.ca
+	name = Kevin Edwards
   signingkey =
   useConfigOnly = true
 
