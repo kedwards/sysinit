@@ -36,12 +36,3 @@ if [ -n "$BASH_VERSION" ]; then
     . "$HOME/.bashrc"
   fi
 fi
-
-# load profile scripts
-if [ -d ~/.profile.d ]; then
-  for i in ~/.profile.d/*; do
-    if [ -f "$i" ]; then
-      source $i
-    fi
-  done
-fi
