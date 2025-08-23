@@ -36,6 +36,9 @@ get_packages_for_pm() {
   yum)
     echo "curl git gnupg2"
     ;;
+  dnf)
+    echo "curl git gnupg2 python3-libdnf5"
+    ;;
   *)
     echo "curl git gnupg"
     ;;
@@ -48,6 +51,7 @@ get_package_manager() {
     ["/etc/redhat-release"]="yum"
     ["/etc/arch-release"]="pacman"
     ["/etc/debian_version"]="apt-get"
+    ["/etc/fedora-release"]="dnf"
   )
   for f in "${!os_info[@]}"; do
     if [[ -f "$f" ]]; then
@@ -75,6 +79,10 @@ install_packages() {
   pacman)
     sudo pacman -Syu --noconfirm
     sudo pacman -S --noconfirm $packages
+    ;;
+  dnf)
+    sudo dnf update -y
+    sudo dnf install -y $packages
     ;;
   yum)
     sudo yum update -y
