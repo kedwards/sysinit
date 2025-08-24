@@ -33,5 +33,5 @@
 
 - name: Install tools
   ansible.builtin.include_tasks: "tools/{{ item }}.yml"
-  loop: "{{ combined_tools | default([]) }}"
-  when: combined_tools is defined and combined_tools | length > 0
+  loop: "{{ sysinit_combined_tools | default([]) }}"
+  when: sysinit_combined_tools is defined and sysinit_combined_tools | length > 0

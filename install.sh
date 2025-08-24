@@ -197,17 +197,66 @@ setup_python_env() {
   sleep 2
   mise reshim
 
-  # Create virtual environment
-  echo "Creating virtual environment..."
-  uv venv --clear
-  
-  # Activate virtual environment
-  # shellcheck disable=SC1091
-  source ".venv/bin/activate"
-  
-  # Install dependencies
-  echo "Installing dependencies..."
-  uv pip install -e .
+  # Only create venv if it doesn't exist or if sysinit package isn't installed
+  if [[ ! -d ".venv" ]] || ! .venv/bin/python -c "import sysinit" 2>/dev/null; then
+    uv venv --clear
+    # shellcheck disable=SC1091
+    source ".venv/bin/activate"
+    uv pip install -e .
+  else
+    # shellcheck disable=SC1091
+    source ".venv/bin/activate"
+  fi
+}
+
+# Run ansible playbook
+run_ansible() {
+  ansible-playbook playbook.yml \
+    -K \
+    --ask-vault-pass \
+    -e "git_user_name=${GIT_USER_NAME}" \
+    -e "git_user_email=${GIT_USER_EMAIL}" \
+    -e "git_signing_key=${GIT_SIGNING_KEY}"
+}
+
+# Check and collect required Git configuration
+setup_git_config() {
+  echo "Checking Git configuration..."
+
+  # Check for environment variables first
+  GIT_USER_NAME="${GIT_USER_NAME:-$(git config --global user.name 2>/dev/null || true)}"
+  GIT_USER_EMAIL="${GIT_USER_EMAIL:-$(git config --global user.email 2>/dev/null || true)}"
+  GIT_SIGNING_KEY="${GIT_SIGNING_KEY:-$(git config --global user.signingkey 2>/dev/null || true)}"
+
+  # Prompt for missing required values
+  if [ -z "$GIT_USER_NAME" ]; then
+    read -p "Enter your Git user name: " GIT_USER_NAME
+  fi
+
+  if [ -z "$GIT_USER_EMAIL" ]; then
+    read -p "Enter your Git email: " GIT_USER_EMAIL
+  fi
+
+  # Signing key is optional
+  if [ -z "$GIT_SIGNING_KEY" ]; then
+    read -p "Enter your Git signing key (optional, press Enter to skip): " GIT_SIGNING_KEY
+  fi
+
+  # Validate required fields
+  if [ -z "$GIT_USER_NAME" ] || [ -z "$GIT_USER_EMAIL" ]; then
+    echo "Error: Git user name and email are required"
+    exit 1
+  fi
+
+  # Export for use in ansible
+  export GIT_USER_NAME
+  export GIT_USER_EMAIL
+  export GIT_SIGNING_KEY
+
+  echo "Git configuration set:"
+  echo "  Name: $GIT_USER_NAME"
+  echo "  Email: $GIT_USER_EMAIL"
+  echo "  Signing Key: ${GIT_SIGNING_KEY:-<not set>}"
 }
 
 # Setup SSH agent for GitHub access
@@ -310,50 +359,13 @@ EOF
   chmod 600 "$HOME/.ssh/current-agent"
 }
 
-# Run ansible playbook
-run_ansible() {
-  echo ""
-  echo "🚀 Running Ansible playbook..."
-  ansible-playbook playbook.yml -K \
-    -e "git_user_name=${GIT_USER_NAME}" \
-    -e "git_user_email=${GIT_USER_EMAIL}" \
-    -e "git_signing_key=${GIT_SIGNING_KEY}"
-}
-
-# Main execution with better error handling
-main() {
-  echo "🚀 Starting sysinit installation..."
-  
-  echo "📦 Installing system packages..."
-  install_packages
-  
-  echo "🔧 Installing mise..."
-  install_mise
-  
-  # Uncomment when ready to sync repo
-  # echo "📁 Syncing repository..."
-  # sync_repo
-  
-  echo "🔧 Setting up Git configuration..."
-  setup_git_config
-  
-  echo "🐍 Setting up Python environment..."
-  setup_python_env
-  
-  echo "🔐 Setting up SSH agent..."
-  setup_ssh_agent
-  
-  echo "⚡ Running Ansible playbook..."
-  run_ansible
-  
-  echo "✅ Installation complete!"
-}
-
 # Main execution with better error handling
 main() {
   install_packages
   install_mise
   # sync_repo
+  # setup_git_config
+  # setup_ssh_agent
   setup_python_env
   run_ansible
 }

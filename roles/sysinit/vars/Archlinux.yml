@@ -13,7 +13,6 @@ sysinit_packages:
   - lynx
   - seahorse
   - stow
-  #- xfce-indicator-plugin
   - xsel
 
 sysinit_aur_packages:

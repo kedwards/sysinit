@@ -8,5 +8,5 @@
     extra_tools: "{{ (tools | default('') | split(',')) | select('match', '.+') | list }}"
     combined_tools: "{{ sysinit_tools | default([]) + extra_tools }}"
   roles:
-    # - sysinit
+    - sysinit
     - reach
