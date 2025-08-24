@@ -3,10 +3,7 @@
 set -euo pipefail
 
 SYSINIT_REPO=https://github.com/withreach/sysinit.git
-
-# Determine script directory with fallback
-# If run via stdin (e.g., curl ... | bash)
-# or if sourced or run as file
+# Determine script directory
 if [[ -p /dev/stdin ]]; then
   script_dir="$HOME/sysinit"
 elif [[ -n "${BASH_SOURCE[0]:-}" ]]; then
@@ -19,7 +16,8 @@ cleanup() {
   if command -v deactivate >/dev/null; then
     deactivate || true
   fi
-  sudo rm -rf "$script_dir/.venv" "${mise_installer:-/tmp}/mise_install.sh" || true
+  # Only clean up temp files, preserve .venv for idempotency
+  rm -rf "${mise_installer:-/tmp}/mise_install.sh" || true
 }
 trap cleanup ERR EXIT
 
@@ -45,12 +43,12 @@ get_packages_for_pm() {
   esac
 }
 
-# Detect Package Manager
+# Detect package manager
 get_package_manager() {
   declare -A os_info=(
     ["/etc/redhat-release"]="yum"
     ["/etc/arch-release"]="pacman"
-    ["/etc/debian_version"]="apt-get"
+    ["/etc/debian_version"]="apt"
     ["/etc/fedora-release"]="dnf"
   )
   for f in "${!os_info[@]}"; do
@@ -70,19 +68,19 @@ install_packages() {
   packages=$(get_packages_for_pm "$pm")
 
   case "$pm" in
-  apt-get)
+  apt)
     sudo apt-get update
     sudo apt-get upgrade -y
     sudo apt-get install -y $packages
     sudo apt-get autoremove -y
     ;;
-  pacman)
-    sudo pacman -Syu --noconfirm
-    sudo pacman -S --noconfirm $packages
-    ;;
   dnf)
     sudo dnf update -y
     sudo dnf install -y $packages
+    ;;
+  pacman)
+    sudo pacman -Syu --noconfirm
+    sudo pacman -S --noconfirm $packages
     ;;
   yum)
     sudo yum update -y
@@ -98,12 +96,24 @@ install_packages() {
 # Install mise and add
 # mise to PATH and activate
 install_mise() {
+  # Check if mise is already installed
+  if command -v "$HOME/.local/bin/mise" >/dev/null 2>&1; then
+    echo "mise already installed, skipping installation"
+    export PATH="$HOME/.local/bin:$PATH"
+    eval "$("$HOME/.local/bin/mise" activate bash)"
+    return
+  fi
+
   mise_installer="$(mktemp -d)"
   gpg --keyserver hkps://keyserver.ubuntu.com --recv-keys 0x7413A06D
   curl https://mise.jdx.dev/install.sh.sig | gpg --decrypt >"$mise_installer/mise_install.sh"
   sh "$mise_installer/mise_install.sh"
   export PATH="$HOME/.local/bin:$PATH"
-  echo "eval \"\$($HOME/.local/bin/mise activate bash)\"" >>~/.bashrc
+  
+  # Only add to bashrc if not already present
+  if ! grep -q "mise activate bash" ~/.bashrc; then
+    echo "eval \"\$($HOME/.local/bin/mise activate bash)\"" >>~/.bashrc
+  fi
   eval "$("$HOME/.local/bin/mise" activate bash)"
 }
 
@@ -157,6 +167,8 @@ setup_git_config() {
   echo "  Signing Key: ${GIT_SIGNING_KEY:-<not set>}"
 }
 
+# Setup and activate virtual environment
+# Install required dependencies
 setup_python_env() {
   cd "$script_dir"
   
@@ -168,14 +180,13 @@ setup_python_env() {
     echo "Error: mise not found in PATH"
     exit 1
   fi
-  
-  # Trust the .mise.toml file
+
   mise trust -a
   
   # Install uv globally if not already installed
   echo "Installing uv via mise..."
   mise use --global uv
-  
+
   # Refresh mise environment to pick up newly installed tools
   eval "$(mise activate bash)"
   
@@ -336,6 +347,15 @@ main() {
   run_ansible
   
   echo "✅ Installation complete!"
+}
+
+# Main execution with better error handling
+main() {
+  install_packages
+  install_mise
+  # sync_repo
+  setup_python_env
+  run_ansible
 }
 
 # Run main function
