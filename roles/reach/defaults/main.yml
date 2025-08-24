@@ -40,11 +40,6 @@ sysinit_mise_plugins:
   - starship
   - usage
 
-# SSH Configuration
-# Set this variable to your SSH key passphrase 
-# to enable automatic SSH agent setup
-# ssh_key_passphrase: "your_passphrase_here"
-
 # Git configuration template variables
 git_user_email: ""
 git_user_name: ""

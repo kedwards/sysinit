@@ -24,7 +24,7 @@ sysinit_mise_plugins:
   - nodejs
   - packer
   - pre-commit
-  - python@3.11
+  - python
   - rclone
   - ripgrep
   - starship

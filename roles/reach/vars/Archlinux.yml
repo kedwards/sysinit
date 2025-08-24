@@ -1,9 +1,7 @@
 ---
 sysinit_packages:
-  - clang
   - docker
   - docker-buildx
-  - flameshot
   - gnome-keyring
   - libxcrypt-compat
   - seahorse
@@ -11,7 +9,6 @@ sysinit_packages:
 sysinit_aur_packages:
   - aws-session-manager-plugin
   - 1password
-  - dropbox
   - slack-desktop
 
 sysinit_tools:
