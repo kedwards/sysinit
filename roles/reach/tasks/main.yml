@@ -17,6 +17,13 @@
   ansible.builtin.set_fact:
     sysinit_combined_tools: "{{ (tools | default('') | split(',')) | select('match', '.+') | list + (sysinit_tools | default([])) }}"
 
+- name: Detect if running WSL
+  ansible.builtin.include_tasks: "detect_wsl.yml"
+
+- name: Load variables
+  ansible.builtin.include_vars: "{{ ansible_distribution }}.yml"
+
+>>>>>>> 3acfa72 (unknown)
 - name: Install system packages
   ansible.builtin.package:
     name: "{{ sysinit_packages }}"

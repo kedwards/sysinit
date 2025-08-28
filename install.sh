@@ -3,13 +3,10 @@
 set -euo pipefail
 
 SYSINIT_REPO=https://github.com/withreach/sysinit.git
-
 # Determine script directory
 if [[ -p /dev/stdin ]]; then
-  # If run via stdin (e.g., curl ... | bash)
   script_dir="$HOME/sysinit"
 elif [[ -n "${BASH_SOURCE[0]:-}" ]]; then
-  # If sourced or run as file
   script_dir="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 else
   script_dir="$(dirname "$(realpath "$0")")"
@@ -130,11 +127,51 @@ sync_repo() {
   fi
 }
 
+# Check and collect required Git configuration
+setup_git_config() {
+  echo "Checking Git configuration..."
+
+  # Check for environment variables first
+  GIT_USER_NAME="${GIT_USER_NAME:-$(git config --global user.name 2>/dev/null || true)}"
+  GIT_USER_EMAIL="${GIT_USER_EMAIL:-$(git config --global user.email 2>/dev/null || true)}"
+  GIT_SIGNING_KEY="${GIT_SIGNING_KEY:-$(git config --global user.signingkey 2>/dev/null || true)}"
+
+  # Prompt for missing required values
+  if [ -z "$GIT_USER_NAME" ]; then
+    read -p "Enter your Git user name: " GIT_USER_NAME
+  fi
+
+  if [ -z "$GIT_USER_EMAIL" ]; then
+    read -p "Enter your Git email: " GIT_USER_EMAIL
+  fi
+
+  # Signing key is optional
+  if [ -z "$GIT_SIGNING_KEY" ]; then
+    read -p "Enter your Git signing key (optional, press Enter to skip): " GIT_SIGNING_KEY
+  fi
+
+  # Validate required fields
+  if [ -z "$GIT_USER_NAME" ] || [ -z "$GIT_USER_EMAIL" ]; then
+    echo "Error: Git user name and email are required"
+    exit 1
+  fi
+
+  # Export for use in ansible
+  export GIT_USER_NAME
+  export GIT_USER_EMAIL
+  export GIT_SIGNING_KEY
+
+  echo "Git configuration set:"
+  echo "  Name: $GIT_USER_NAME"
+  echo "  Email: $GIT_USER_EMAIL"
+  echo "  Signing Key: ${GIT_SIGNING_KEY:-<not set>}"
+}
+
 # Setup and activate virtual environment
 # Install required dependencies
 setup_python_env() {
   cd "$script_dir"
-
+  
   # Ensure mise is in PATH and activated
   export PATH="$HOME/.local/bin:$PATH"
   if command -v mise >/dev/null 2>&1; then
@@ -145,9 +182,18 @@ setup_python_env() {
   fi
 
   mise trust -a
+  
+  # Install uv globally if not already installed
+  echo "Installing uv via mise..."
   mise use --global uv
+
+  # Refresh mise environment to pick up newly installed tools
   eval "$(mise activate bash)"
+  
+  # Add mise shims to PATH explicitly
   export PATH="$HOME/.local/share/mise/shims:$PATH"
+  
+  # Wait a moment and try to refresh mise
   sleep 2
   mise reshim
 

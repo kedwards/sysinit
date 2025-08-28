@@ -19,7 +19,7 @@ sysinit_aur_packages:
   - aws-session-manager-plugin
   - 1password
   - dropbox
-  - slack-desktop
+  #- slack-desktop
   - warp-terminal
 
 sysinit_tools:

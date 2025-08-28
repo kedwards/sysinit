@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+YELLOW="\e[33m"
+BLUE="\e[34m"
+ENDCOLOR="\e[0m"
+
+echo "---------------------------------------------------"
+echo " "
+echo -e "${BLUE}██████  ███████  █████   ██████ ██   ██"
+echo "██   ██ ██      ██   ██ ██      ██   ██"
+echo "██████  █████   ███████ ██      ███████"
+echo "██   ██ ██      ██   ██ ██      ██   ██"
+echo -e "██   ██ ███████ ██   ██  ██████ ██   ██${ENDCOLOR}"
+echo " "
+echo "WELCOME $USER TO REACH WSL"
+echo " "
+echo -e "${YELLOW}rch-repos${ENDCOLOR}  - configure repositories"
+echo -e "${YELLOW}rch-start${ENDCOLOR}  - start local development"
+echo "---------------------------------------------------"

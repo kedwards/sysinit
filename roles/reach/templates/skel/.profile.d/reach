@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-echo "Running sysinit"
+
 # Detects the shell type (Bash or Zsh)
 # set up completions
 if [[ -n "$BASH_VERSION" ]]; then
@@ -38,12 +38,12 @@ if command -v docker &>/dev/null; then
 fi
 
 # git
-if command -v git &>/dev/null; then
-  file="$HOME/.local/share/bash-completion/completions/git-completion.$SHELL_TYPE"
-  if [ -f "$file" ]; then
-    source "$file"
-  fi
-fi
+# if command -v git &>/dev/null; then
+#   file="$HOME/.local/share/bash-completion/completions/git-completion.$SHELL_TYPE"
+#   if [ -f "$file" ]; then
+#     source "$file"
+#   fi
+# fi
 
 # mise
 if command -v mise &>/dev/null; then
@@ -70,8 +70,8 @@ if command -v mise &>/dev/null; then
 
   # granted.
   if read -ra info <<<"$(mise_info granted)"; then
-  #   export GRANTED_QUIET=true
-  #   export GRANTED_ALIAS_CONFIGURED=true
+    export GRANTED_QUIET=true
+    export GRANTED_ALIAS_CONFIGURED=true
     alias assume='source assume'
   fi
 
