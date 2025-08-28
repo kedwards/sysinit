@@ -1,0 +1,15 @@
+---
+# Detect if running inside Windows Subsystem for Linux (WSL)
+- name: Ensure is_wsl fact has a default
+  ansible.builtin.set_fact:
+    is_wsl: false
+  when: is_wsl is not defined
+
+- name: Gather kernel information
+  ansible.builtin.command: uname -a
+  register: uname_result
+  changed_when: false
+
+- name: Set WSL detection fact
+  ansible.builtin.set_fact:
+    is_wsl: "{{ 'microsoft' in uname_result.stdout | lower }}"
