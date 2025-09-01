@@ -2,7 +2,7 @@
 name = "sysinit"
 version = "0.1.0"
 description = "Linux system initialization"
-authors = [{name = "Reach DevOps", email = "devoops@withreach.com"}]
+authors = [{name = "Kevin Edwards", email = "kedwards@kevinedwards.ca"}]
 keywords = ["cli"]
 readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.11"
