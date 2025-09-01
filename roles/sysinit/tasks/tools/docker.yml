@@ -1,11 +1,12 @@
 ---
+# APT-based systems (Ubuntu/Debian)
 - name: "Check if docker GPG keyring exists (APT)"
   ansible.builtin.stat:
     path: /etc/apt/keyrings/docker.gpg
   register: docker_keyring_exists
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-- name: "Add docker official GPG key for {{ ansible_distribution }} (APT)"
+- name: "Add docker official GPG key for APT {{ ansible_distribution }}"
   ansible.builtin.get_url:
     url: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
     dest: /tmp/docker.gpg
@@ -13,7 +14,7 @@
   register: docker_gpg_download
   when: (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and not docker_keyring_exists.stat.exists
 
-- name: "Import docker GPG key for {{ ansible_distribution }} (APT)"
+- name: "Import docker GPG key for APT {{ ansible_distribution }}"
   ansible.builtin.command:
     cmd: gpg --dearmor -o /etc/apt/keyrings/docker.gpg /tmp/docker.gpg
     creates: /etc/apt/keyrings/docker.gpg
@@ -51,6 +52,7 @@
       - docker-compose-plugin
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
+# DNF-based systems (Fedora)
 - name: Add Docker repository (Fedora)
   ansible.builtin.yum_repository:
     name: docker-ce

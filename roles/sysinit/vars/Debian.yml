@@ -1,12 +1,10 @@
 ---
 sysinit_packages:
-  - flameshot
-  - stow
-  - xsel
+  - unzip
 
 sysinit_tools:
   - aws-ssm
-  - bash-my-aws
   - docker
-  - dropbox
   - mise
+
+sysinit_custom_apt_packages: []

@@ -1,6 +1,6 @@
-# Molecule Testing for Sysinit Role
+# Molecule Testing for Reach Role
 
-This directory contains Molecule scenarios for testing the `sysinit` Ansible role.
+This directory contains Molecule scenarios for testing the `reach` Ansible role.
 
 ## Overview
 
@@ -9,7 +9,7 @@ The Molecule tests focus on:
 1. **Idempotency Testing**: Ensures that running the role multiple times produces the same result
 2. **File Creation**: Verifies that expected files and directories are created with correct permissions
 3. **System Integration**: Tests hosts file modifications and other system-level changes
-4. **Cross-Platform**: Tests on both Ubuntu and CentOS containers
+4. **Cross-Platform**: Tests on Debian/Ubuntu, Arch, and CentOS containers
 
 ## Test Scenarios
 
@@ -92,7 +92,7 @@ Tests verify:
 - Appropriate permissions (755 for directories, 644 for files, 755 for scripts)
 - File content validation
 
-### Hosts File Testing  
+### Hosts File Testing
 Special attention to `/etc/hosts` modifications:
 - Entries are added correctly
 - No duplicate entries on multiple runs
