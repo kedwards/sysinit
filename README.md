@@ -1,5 +1,10 @@
 # Linux System Initialization
 
+> [!IMPORTANT]
+> This repository is deprecated as a standalone project.
+> Active development has moved to `https://github.com/kedwards/debian-sysinit` in the `sysinit/` legacy subtree and the `sysinit-iso/` current implementation subtree.
+> Use the monorepo as the canonical source of truth.
+
 An opinionated script to initialize your Linux system.
 
 ## Distros
